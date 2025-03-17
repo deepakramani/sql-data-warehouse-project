@@ -1,7 +1,7 @@
 services:
   dwh-crm-erp:
     container_name: dwh-crm-erp_container
-    image: debezium/postgres:13-alpine
+    image: postgres:13-alpine
     hostname: ${POSTGRES_HOST}
     ports:
       - 5432:5432
