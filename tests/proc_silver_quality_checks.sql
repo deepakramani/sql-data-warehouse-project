@@ -45,9 +45,10 @@ BEGIN
     END IF;
 
     -- Check for white spaces in cst_firstname
-    SELECT COUNT(*) INTO failed_count FROM silver.crm_cust_info WHERE cst_firstname != TRIM(cst_firstname);
- lity checks passed!"**.  
-- If any check **fails**, execution **stops** with an error message.        failed_checks := failed_checks + 1;
+     SELECT COUNT(*) INTO failed_count FROM silver.crm_cust_info WHERE cst_firstname != TRIM(cst_firstname);
+    IF failed_count > 0 THEN
+        RAISE NOTICE '❌ First name has leading/trailing spaces in crm_cust_info: %', failed_count;
+        failed_checks := failed_checks + 1;
     END IF;
 
     -- Check for white spaces in cst_lastname
