@@ -1,5 +1,24 @@
 SHELL:=/bin/bash
 
+.PHONY: help install_docker setup_bronze_tables populate_bronze_tables setup_silver_tables populate_silver_tables setup_gold_layer test_silver_layer test_gold_layer
+
+help:
+	@echo "Usage: make [target]"
+	@echo
+	@echo "Recommended order to run commands:"
+	@echo "  1. make install_docker         # Install Docker and prerequisites"
+	@echo "  2. make up                     # Start the ETL DWH environment"
+	@echo "  3. make setup_bronze_tables    # Create Bronze tables"
+	@echo "  4. make populate_bronze_tables # Load raw data into Bronze tables"
+	@echo "  5. make setup_silver_tables    # Create Silver tables"
+	@echo "  6. make populate_silver_tables # Clean and transform data into Silver layer"
+	@echo "  7. make setup_gold_layer       # Create Gold layer views"
+	@echo "  8. make test_silver_layer      # Run quality checks on Silver layer"
+	@echo "  9. make test_gold_layer        # Run quality checks on Gold layer"
+	@echo " 10. make down                   # Stop and clean up the environment"
+	@echo
+	@echo "Run 'make <target>' to execute a specific step."
+
 install_docker:
 	source ./scripts/install_docker.sh 
 
@@ -13,13 +32,13 @@ down:
 	docker-compose down -v
 
 setup_bronze_tables:
-	@echo -n "Creating bronze layer tables. Please wait..."
+	@echo "Creating bronze layer tables. Please wait..."
 	docker exec -i dwh-crm-erp_container psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} < ./etl_scripts/bronze/ddl_bronze.sql
 	@sleep 5
 	@echo -n "Bronze layer tables created"
 
 populate_bronze_tables:
-	@echo -n "Loading the bronze stored procedure"
+	@echo "Loading the bronze stored procedure"
 	docker exec -i dwh-crm-erp_container psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} < ./etl_scripts/bronze/proc_load_bronze.sql	
 	@echo -n "Populating tables..."
 	docker exec -i dwh-crm-erp_container psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CALL bronze.load_bronze();"
