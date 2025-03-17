@@ -63,8 +63,8 @@ BEGIN
     RAISE NOTICE 'Checking referential integrity between fact_sales and dimensions...';
     IF EXISTS (
         SELECT 1 FROM gold.fact_sales fs
-        LEFT JOIN gold.dim_customers dc ON dc.customer_skey = fs.customer_key
-        LEFT JOIN gold.dim_products dp ON dp.product_skey = fs.product_key
+        LEFT JOIN gold.dim_customers dc ON dc.customer_skey = fs.customer_skey
+        LEFT JOIN gold.dim_products dp ON dp.product_skey = fs.product_skey
         WHERE dc.customer_skey IS NULL OR dp.product_skey IS NULL
     ) THEN
         RAISE NOTICE '❌ Orphaned records found in gold.fact_sales!';
