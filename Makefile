@@ -45,14 +45,14 @@ setup_gold_layer:
 	docker exec -i dwh-crm-erp_container psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} < ./etl_scripts/gold/ddl_gold.sql	
 	@sleep 5
 
-check_silver_data_quality:
+test_silver_layer:
 	@echo -n "Loading the silver data quality check stored procedure"
 	docker exec -i dwh-crm-erp_container psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} < ./tests/proc_silver_quality_checks.sql
 	@echo -n "Populating tables..."
 	docker exec -i dwh-crm-erp_container psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} -c "CALL silver.run_quality_checks();"
 	@sleep 2
 
-check_gold_data_quality:
+test_gold_layer:
 	@echo -n "Loading the gold data quality check stored procedure"
 	docker exec -i dwh-crm-erp_container psql -U ${POSTGRES_USER} -d ${POSTGRES_DB} < ./tests/proc_gold_quality_checks.sql
 	@echo -n "Populating tables..."
